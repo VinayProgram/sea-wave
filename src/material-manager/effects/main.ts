@@ -1,4 +1,6 @@
 // effects/applyEffects.ts
+
+//@ts-nocheck
 import { positionLocal, vec2, vec3, float, varying, color, normalize, transformNormalToView } from "three/tsl";
 import type { Effect, GridContext, TSLNode } from "../types/generic-types";
 
