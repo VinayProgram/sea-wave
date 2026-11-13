@@ -32,10 +32,13 @@ export function noiseEffect(_grid: GridContext, options: NoiseOptions = {}) {
     name: "noise",
     uniforms,
     height: (p) => {
+    
       const swell = mx_noise_float(
+          //@ts-ignore
         vec3(p.x.mul(swellScale), p.y.mul(swellScale), time.mul(seaSpeed).mul(0.5))
       ).mul(swellAmp);
       const chop = mx_noise_float(
+          //@ts-ignore
         vec3(p.x.mul(chopScale), p.y.mul(chopScale), time.mul(seaSpeed).mul(2))
       ).mul(chopAmp);
       return swell.add(chop);

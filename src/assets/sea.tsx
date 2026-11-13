@@ -5,7 +5,6 @@ import * as THREE from "three";
 import { makeGrid } from "../material-manager/utils/grid-maker";
 import { applyEffects } from "../material-manager/effects/main";
 import { noiseEffect } from "../material-manager/effects/noise-effect";
-import { rippleEffect } from "../material-manager/effects/ripple-effect";
 import { heightColorEffect } from "../material-manager/effects/height-color-effect";
 import { useSeaControls } from "../context/sea-control";
 
