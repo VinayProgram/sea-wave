@@ -33,6 +33,20 @@ export const defaultSchema: Schema = {
     foamStart: { type: "number", value: 1.2,  min: -3, max: 6, step: 0.05 },
     foamEnd:   { type: "number", value: 2.2,  min: -3, max: 8, step: 0.05 },
   },
+  // in defaultSchema (controls/sea-controls.tsx)
+bubbles: {
+  bubbleColor:    { type: "color",  value: "#ffffff" },
+  scale:          { type: "number", value: 1.5,  min: 0.2,  max: 6,   step: 0.05 },
+  size:           { type: "number", value: 0.1,  min: 0.01, max: 0.4, step: 0.01 },
+  softness:       { type: "number", value: 0.06, min: 0.005, max: 0.3, step: 0.005 },
+  drift:          { type: "number", value: 0.4,  min: 0,    max: 3,   step: 0.05 },
+  activityMin:    { type: "number", value: 0.25, min: 0,    max: 2,   step: 0.01 },
+  activityMax:    { type: "number", value: 0.9,  min: 0.1,  max: 3,   step: 0.01 },
+  impactRadius:   { type: "number", value: 6,    min: 1,    max: 20,  step: 0.5 },
+  impactSpeed:    { type: "number", value: 5,    min: 0.5,  max: 20,  step: 0.5 },
+  impactDuration: { type: "number", value: 2.5,  min: 0.5,  max: 8,   step: 0.1 },
+  opacity:        { type: "number", value: 0.85, min: 0,    max: 1,   step: 0.01 },
+},
 };
 
 type Value = number | string;

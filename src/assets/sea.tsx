@@ -7,12 +7,16 @@ import { applyEffects } from "../material-manager/effects/main";
 import { noiseEffect } from "../material-manager/effects/noise-effect";
 import { heightColorEffect } from "../material-manager/effects/height-color-effect";
 import { useSeaControls } from "../context/sea-control";
+import { bubbleEffect } from "../material-manager/effects/bubble-effect";
+import { rippleEffect } from "../material-manager/effects/ripple-effect";
+import { useFrame } from "@react-three/fiber";
+import { seaNow } from "../controls/sea-impacts";
 
 const GRID = makeGrid(50, 100);
 
 const SeaMesh = ({ pos }: { pos: [number, number, number] }) => {
   const { uniforms } = useSeaControls();
-
+useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
   const material = useMemo(() => {
     const m = new MeshStandardNodeMaterial({
       roughness: 0.25,
@@ -27,6 +31,7 @@ const SeaMesh = ({ pos }: { pos: [number, number, number] }) => {
         noiseEffect(GRID, uniforms.noise),
         // rippleEffect(GRID, uniforms.ripple),
         heightColorEffect(GRID, uniforms.heightColor),
+         bubbleEffect(GRID, uniforms.bubbles),
       ],
       [pos[0], pos[2]]
     );

@@ -17,9 +17,9 @@ return (
 
           <Bridge>
             <SeaMesh pos={[0, 0, 0]} />
-            <SeaMesh pos={[49, 0, 0]} />
+            {/* <SeaMesh pos={[49, 0, 0]} />
             <SeaMesh pos={[0, 0, 49]} />
-            <SeaMesh pos={[49, 0, 49]} />
+            <SeaMesh pos={[49, 0, 49]} /> */}
             <OrbitControls />
             <ambientLight intensity={0.4} color="white" />
             <Environment background files={'./sunset.hdr'} />

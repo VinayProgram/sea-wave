@@ -34,15 +34,26 @@ export function applyEffects(
 
     heightVarying = varying(h);
   }
+// effects/main.ts
+  const activityFns = effects.map((e) => e.activity).filter(Boolean) as ((p: TSLNode) => TSLNode)[];
+  let activityVarying: TSLNode = float(0);
+
+  if (activityFns.length) {
+    const p = vec2(positionLocal.x.add(origin[0]), positionLocal.y.sub(origin[1]));
+    const a = activityFns.reduce((acc, fn) => acc.add(fn(p)), float(0));
+    activityVarying = varying(a);
+  }
 
   // ---- fragment stage: chain color effects ----
   const colorFns = effects.map((e) => e.color).filter(Boolean) as ((c: TSLNode) => TSLNode)[];
 
   if (colorFns.length) {
     let c: TSLNode = color(material.color ?? 0xffffff);
-    for (const fn of colorFns) c = fn({ height: heightVarying, color: c });
+    for (const fn of colorFns) c = fn({ height: heightVarying, activity: activityVarying, color: c });
     material.colorNode = c;
   }
+
+  
 
   // expose uniforms by effect name for runtime tweaking
   return Object.fromEntries(effects.map((e) => [e.name, e.uniforms]));

@@ -8,14 +8,17 @@ export interface GridContext {
   segmentSize: number; // size / segments, the "gauge"
 }
 
+// effects/types.ts (additions)
 export interface ColorContext {
-  height: TSLNode; // final height, passed to the fragment stage as a varying
-  color: TSLNode;  // color so far, which this effect modifies
+  height: TSLNode;
+  activity: TSLNode; // 0 = calm, 1+ = very disturbed
+  color: TSLNode;
 }
 
 export interface Effect<U = Record<string, TSLNode>> {
   name: string;
-  uniforms: U;                                  // live-tweakable values
-  height?: (p: TSLNode) => TSLNode;             // vertex: p is vec2(x, y)
-  color?: (ctx: ColorContext) => TSLNode;       // fragment: returns new color
+  uniforms: U;
+  height?: (p: TSLNode) => TSLNode;
+  activity?: (p: TSLNode) => TSLNode; // NEW, optional
+  color?: (ctx: ColorContext) => TSLNode;
 }

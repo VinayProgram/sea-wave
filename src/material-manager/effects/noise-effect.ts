@@ -43,6 +43,11 @@ export function noiseEffect(_grid: GridContext, options: NoiseOptions = {}) {
       ).mul(chopAmp);
       return swell.add(chop);
     },
+    // effects/noise-effect.ts (inside the effect object)
+activity: (p) =>
+  mx_noise_float(vec3(p.x.mul(chopScale), p.y.mul(chopScale), time.mul(seaSpeed).mul(2)))
+    .abs()
+    .mul(chopAmp.mul(20)), // scale so a typical chop reads ~0..1
   };
   return effect;
 }

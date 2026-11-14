@@ -1,16 +1,20 @@
 // effects/rippleEffect.ts
-import { time, vec2, float, uniform, fract, floor, sin, exp, clamp, smoothstep, length } from "three/tsl";
+import { time, vec2, float, fract, floor, sin, exp, clamp, smoothstep, length } from "three/tsl";
 import type { Effect, GridContext, TSLNode } from "../types/generic-types";
+import { toUniform } from "../utils/to-uniform";
 
 const hash = (n: TSLNode) => fract(sin(n.mul(12.9898)).mul(43758.5453));
+const defaults = { impactedRows: 6, speed: 6, period: 4, maxHeight: 2.5, distDecay: 0.04 };
+export type RippleOptions = { [K in keyof typeof defaults]?: number | TSLNode };
 
-export function rippleEffect(grid: GridContext) {
+export function rippleEffect(grid: GridContext, options: RippleOptions = {}) {
+  const merged = { ...defaults, ...options };
   const uniforms = {
-    impactedRows: uniform(6),
-    speed: uniform(6),
-    period: uniform(4),
-    maxHeight: uniform(2.5),
-    distDecay: uniform(0.04),
+    impactedRows: toUniform(merged.impactedRows),
+    speed: toUniform(merged.speed),
+    period: toUniform(merged.period),
+    maxHeight: toUniform(merged.maxHeight),
+    distDecay: toUniform(merged.distDecay),
   };
   const { impactedRows, speed, period, maxHeight, distDecay } = uniforms;
 
@@ -44,6 +48,7 @@ export function rippleEffect(grid: GridContext) {
     name: "ripple",
     uniforms,
     height: (p) => pulse(p, 0).add(pulse(p, 1)),
+    activity: (p) => pulse(p, 0).add(pulse(p, 1)).abs().div(maxHeight),
   };
   return effect;
 }
