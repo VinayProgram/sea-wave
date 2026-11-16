@@ -47,6 +47,25 @@ bubbles: {
   impactDuration: { type: "number", value: 2.5,  min: 0.5,  max: 8,   step: 0.1 },
   opacity:        { type: "number", value: 0.85, min: 0,    max: 1,   step: 0.01 },
 },
+shore: {
+  seaLevel:   { type: "number", value: 0,    min: -2,    max: 3,   step: 0.05 },
+  slope:      { type: "number", value: 0.12, min: 0.02,  max: 0.4, step: 0.01 },
+  shoreZ:     { type: "number", value: 0,    min: -25,   max: 75,  step: 1 },
+  coastAmp:   { type: "number", value: 1.5,  min: 0,     max: 6,   step: 0.1 },
+  coastScale: { type: "number", value: 0.04, min: 0.005, max: 0.2, step: 0.005 },
+  bumpAmp:    { type: "number", value: 0.2,  min: 0,     max: 1,   step: 0.01 },
+  bumpScale:  { type: "number", value: 0.35, min: 0.05,  max: 1.5, step: 0.05 },
+  shoreWidth: { type: "number", value: 0.35, min: 0.05,  max: 2,   step: 0.05 },
+  deepDepth:  { type: "number", value: 3,    min: 0.5,   max: 10,  step: 0.1 },
+  wetWidth:   { type: "number", value: 0.6,  min: 0.1,   max: 3,   step: 0.05 },
+  foamWidth:  { type: "number", value: 0.25, min: 0.02,  max: 1,   step: 0.01 },
+  surfWidth:  { type: "number", value: 1.2,  min: 0.2,   max: 4,   step: 0.1 },
+  minOpacity: { type: "number", value: 0.55, min: 0,     max: 1,   step: 0.01 },
+  maxOpacity: { type: "number", value: 0.85, min: 0,     max: 1,   step: 0.01 },
+  dryColor:   { type: "color",  value: "#e6cf98" },
+  wetColor:   { type: "color",  value: "#8a7048" },
+  foamColor:  { type: "color",  value: "#ffffff" },
+},
 };
 
 type Value = number | string;

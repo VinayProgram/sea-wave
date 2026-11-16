@@ -1,60 +1,31 @@
-// effects/applyEffects.ts
+// pipeline/main.ts
+import type { Effect, GridContext, PipelineContext } from "../types/generic-types";
+import { float } from "three/tsl";
+import {
+  heightStage, normalStage, activityStage, bindStage, colorStage, opacityStage, type Stage,
+} from "./pipeline-stage";
 
-//@ts-nocheck
-import { positionLocal, vec2, vec3, float, varying, color, normalize, transformNormalToView } from "three/tsl";
-import type { Effect, GridContext, TSLNode } from "../types/generic-types";
+// the switch: order matters, and each stage can be turned off by name
+export const stageRegistry: Stage[] = [
+  heightStage, normalStage, activityStage, bindStage, colorStage, opacityStage,
+];
+export const stageEnabled: Record<string, boolean> = Object.fromEntries(
+  stageRegistry.map((s) => [s.name, true])
+);
 
 export function applyEffects(
   material: any,
   grid: GridContext,
   effects: Effect<any>[],
-  origin: [number, number] = [0, 0] // tile's world x, z
+  origin: [number, number] = [0, 0]
 ) {
-  // ---- vertex stage: sum all height contributions ----
-  const heightFns = effects.map((e) => e.height).filter(Boolean) as ((p: TSLNode) => TSLNode)[];
-  let heightVarying: TSLNode = float(0);
+  const ctx = {
+    grid, origin, shared: {},
+    wavesV: float(0), heightV: float(0), activityV: float(0),
+  } as unknown as PipelineContext;
 
-  if (heightFns.length) {
-    const height = (p: TSLNode) => heightFns.reduce((acc, fn) => acc.add(fn(p)), float(0));
-
-    // The mesh is rotated -90° on X, so local y maps to -world z.
-    // Using (y - originZ) keeps the mapping consistent across tiles.
-    const p = vec2(
-      positionLocal.x.add(origin[0]),
-      positionLocal.y.sub(origin[1])
-    );
-    const h = height(p);
-
-    material.positionNode = vec3(positionLocal.x, positionLocal.y, positionLocal.z.add(h));
-
-    const e = float(grid.segmentSize);
-    const dhdx = height(p.add(vec2(e, 0))).sub(height(p.sub(vec2(e, 0)))).div(e.mul(2));
-    const dhdy = height(p.add(vec2(0, e))).sub(height(p.sub(vec2(0, e)))).div(e.mul(2));
-    material.normalNode = transformNormalToView(normalize(vec3(dhdx.negate(), dhdy.negate(), 1)));
-
-    heightVarying = varying(h);
+  for (const stage of stageRegistry) {
+    if (stageEnabled[stage.name] && stage.enabled(effects)) stage.run(material, effects, ctx);
   }
-// effects/main.ts
-  const activityFns = effects.map((e) => e.activity).filter(Boolean) as ((p: TSLNode) => TSLNode)[];
-  let activityVarying: TSLNode = float(0);
-
-  if (activityFns.length) {
-    const p = vec2(positionLocal.x.add(origin[0]), positionLocal.y.sub(origin[1]));
-    const a = activityFns.reduce((acc, fn) => acc.add(fn(p)), float(0));
-    activityVarying = varying(a);
-  }
-
-  // ---- fragment stage: chain color effects ----
-  const colorFns = effects.map((e) => e.color).filter(Boolean) as ((c: TSLNode) => TSLNode)[];
-
-  if (colorFns.length) {
-    let c: TSLNode = color(material.color ?? 0xffffff);
-    for (const fn of colorFns) c = fn({ height: heightVarying, activity: activityVarying, color: c });
-    material.colorNode = c;
-  }
-
-  
-
-  // expose uniforms by effect name for runtime tweaking
   return Object.fromEntries(effects.map((e) => [e.name, e.uniforms]));
 }

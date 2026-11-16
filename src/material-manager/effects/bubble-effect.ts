@@ -52,6 +52,7 @@ export function bubbleEffect(_grid: GridContext, options: BubbleOptions = {}) {
 
       // --- bubble shapes (world space, so tiles match) ---
       const layer = (s: TSLNode, r: TSLNode, off: number) => {
+        //@ts-ignore
         const w = mx_worley_noise_float(vec3(wx.mul(s).add(off), wz.mul(s).add(off), t.add(off)));
         return float(1).sub(smoothstep(r, r.add(u.softness), w));
       };
@@ -62,13 +63,17 @@ export function bubbleEffect(_grid: GridContext, options: BubbleOptions = {}) {
 
       // --- source 2: impacts (fish, objects) ---
       let impact: TSLNode = float(0);
+    
       for (let i = 0; i < MAX_IMPACTS; i++) {
         const d4 = impactData.element(i);
+      //@ts-ignore
         const age = seaNow.sub(d4.z);
         const life = clamp(float(1).sub(age.div(u.impactDuration)), 0, 1);
         const radius = clamp(age.mul(u.impactSpeed), 0, u.impactRadius);
+          //@ts-ignore
         const dist = length(vec2(wx, wz).sub(vec2(d4.x, d4.y)));
         const disc = float(1).sub(smoothstep(radius.mul(0.6), radius, dist)); // dense core, soft edge
+         //@ts-ignore
         impact = impact.max(disc.mul(life).mul(d4.w)); // w = 0 means an empty slot
       }
 

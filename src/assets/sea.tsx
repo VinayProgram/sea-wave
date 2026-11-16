@@ -8,7 +8,6 @@ import { noiseEffect } from "../material-manager/effects/noise-effect";
 import { heightColorEffect } from "../material-manager/effects/height-color-effect";
 import { useSeaControls } from "../context/sea-control";
 import { bubbleEffect } from "../material-manager/effects/bubble-effect";
-import { rippleEffect } from "../material-manager/effects/ripple-effect";
 import { useFrame } from "@react-three/fiber";
 import { seaNow } from "../controls/sea-impacts";
 
