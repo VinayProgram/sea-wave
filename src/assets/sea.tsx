@@ -38,8 +38,8 @@ useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
   }, [uniforms]); // built once; the sliders only change uniform values
 
   return (
-    <mesh material={material} rotation={[-Math.PI / 2, 0, 0]} position={pos}>
-      <boxGeometry args={[GRID.size, GRID.size, 5, GRID.segments, GRID.segments]} />
+    <mesh material={material} rotation={[-Math.PI / 2, 0,0]} position={pos}>
+      <planeGeometry args={[GRID.size, GRID.size, GRID.segments, GRID.segments]} />
     </mesh>
   );
 };

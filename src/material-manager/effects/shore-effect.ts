@@ -3,6 +3,9 @@
 // effects/shore-effect.ts
 import {
   positionWorld, time, vec3, float, mix, smoothstep, max, mx_fractal_noise_float, mx_noise_float,
+  cos,
+  sin,
+  radians,
 } from "three/tsl";
 import { toColorUniform, toUniform, type ColorInput } from "../utils/to-uniform";
 import type { Effect, GridContext, TSLNode } from "../types/generic-types";
@@ -11,6 +14,8 @@ const defaults = {
   // terrain: sea toward -z, beach toward +z
   seaLevel: 0, slope: 0.12, shoreZ: 0,
   coastAmp: 1.5, coastScale: 0.04, bumpAmp: 0.2, bumpScale: 0.35,
+  coastAngle: 80, // radians, 0 = sea toward -z
+
   // shore look
   shoreWidth: 0.35,  // depth over which sand turns into water
   deepDepth: 3,      // depth where water reaches max opacity
@@ -21,8 +26,11 @@ const defaults = {
   dryColor: 0xe6cf98 as ColorInput,
   wetColor: 0x8a7048 as ColorInput,
   foamColor: 0xffffff as ColorInput,
+  shallowColor: 0x4fd1c5 as ColorInput,
+  deepColor: 0x06214f as ColorInput,
+  tintMix: 0.6, // 1 = depth tint only, 0 = heightColor only
 };
-const colorKeys = ["dryColor", "wetColor", "foamColor"];
+const colorKeys = ["dryColor", "wetColor", "foamColor", "shallowColor", "deepColor"];
 
 export type ShoreOptions = {
   [K in keyof typeof defaults]?: K extends `${string}Color` ? ColorInput : number | TSLNode;
@@ -37,13 +45,23 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
 
   // ---- the terrain formula: world x, z in -> sand height out ----
   const sand = (wx: TSLNode, wz: TSLNode) => {
-    const tilt = wz.sub(u.shoreZ).mul(u.slope);
+    const rad = radians(u.coastAngle);
+    const c = cos(rad);
+    const s = sin(rad);
+
+    const rx = wx.mul(c).sub(wz.mul(s));
+    const rz = wx.mul(s).add(wz.mul(c));
+
+    const tilt = rz.sub(u.shoreZ).mul(u.slope);
+
     const coast = mx_fractal_noise_float(
-      vec3(wx.mul(u.coastScale), wz.mul(u.coastScale), float(0)), 3, 2.0, 0.5
+      vec3(rx.mul(u.coastScale), rz.mul(u.coastScale), float(0)), 3, 2.0, 0.5
     ).mul(u.coastAmp);
+
     const bumps = mx_fractal_noise_float(
-      vec3(wx.mul(u.bumpScale), wz.mul(u.bumpScale), float(10)), 2, 2.0, 0.5
+      vec3(rx.mul(u.bumpScale), rz.mul(u.bumpScale), float(10)), 2, 2.0, 0.5
     ).mul(u.bumpAmp);
+
     return tilt.add(coast).add(bumps);
   };
 
@@ -80,8 +98,13 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
     color: ({ color, ctx }) => {
       const depth = ctx.shared.depth;
       const seaMask = smoothstep(0, u.shoreWidth, depth);
+      const deepT = smoothstep(0, u.deepDepth, depth);
 
-      const wetAmt = smoothstep(u.wetWidth.negate(), 0, depth); // 1 at the waterline
+      const waterCol = mix(u.shallowColor, u.deepColor, deepT)
+        .mul(u.tintMix)
+        .add(color.mul(float(1).sub(u.tintMix)));
+
+      const wetAmt = smoothstep(u.wetWidth.negate(), 0, depth);
       const sandCol = mix(u.dryColor, u.wetColor, wetAmt);
 
       const band = float(1).sub(smoothstep(0, u.foamWidth, depth.abs()));
@@ -91,7 +114,7 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
       const foam = band.mul(smoothstep(0.3, 0.7, lace.add(band.mul(0.3))));
       ctx.shared.foam = foam; // the opacity stage reuses it
 
-      return mix(mix(sandCol, color, seaMask), u.foamColor, foam);
+      return mix(mix(sandCol, waterCol, seaMask), u.foamColor, foam);
     },
 
     // FRAGMENT: solid land, see-through shallows, denser deep water, opaque foam
