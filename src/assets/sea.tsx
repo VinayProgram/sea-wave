@@ -2,7 +2,6 @@
 import { useMemo } from "react";
 import { MeshStandardNodeMaterial } from "three/webgpu";
 import * as THREE from "three";
-import { makeGrid } from "../material-manager/utils/grid-maker";
 import { applyEffects } from "../material-manager/effects/main";
 import { noiseEffect } from "../material-manager/effects/noise-effect";
 import { heightColorEffect } from "../material-manager/effects/height-color-effect";
@@ -11,12 +10,12 @@ import { bubbleEffect } from "../material-manager/effects/bubble-effect";
 import { useFrame } from "@react-three/fiber";
 import { seaNow } from "../controls/sea-impacts";
 import { shoreEffect } from "../material-manager/effects/shore-effect";
+import { GRID } from "../material-manager/utils/grid-maker";
 
-const GRID = makeGrid(50, 100);
 
 const SeaMesh = ({ pos }: { pos: [number, number, number] }) => {
   const { uniforms } = useSeaControls();
-useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
+  useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
   const material = useMemo(() => {
     const m = new MeshStandardNodeMaterial({
       roughness: 0.25,
@@ -28,10 +27,10 @@ useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
       m,
       GRID,
       [
-       noiseEffect(GRID, uniforms.noise),
-               heightColorEffect(GRID, uniforms.heightColor), // water color
-               shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
-               bubbleEffect(GRID, uniforms.bubbles),
+        noiseEffect(GRID, uniforms.noise),
+        heightColorEffect(GRID, uniforms.heightColor), // water color
+        shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
+        bubbleEffect(GRID, uniforms.bubbles),
       ],
       [pos[0], pos[2]]
     );
@@ -39,7 +38,7 @@ useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
   }, [uniforms]); // built once; the sliders only change uniform values
 
   return (
-    <mesh material={material} rotation={[-Math.PI / 2, 0,0]} position={pos}>
+    <mesh material={material} rotation={[-Math.PI / 2, 0, 0]} position={pos}>
       <planeGeometry args={[GRID.size, GRID.size, GRID.segments, GRID.segments]} />
     </mesh>
   );

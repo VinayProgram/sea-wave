@@ -6,6 +6,7 @@ import {
   cos,
   sin,
   radians,
+  clamp,
 } from "three/tsl";
 import { toColorUniform, toUniform, type ColorInput } from "../utils/to-uniform";
 import type { Effect, GridContext, TSLNode } from "../types/generic-types";
@@ -85,22 +86,28 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
 
     // FRAGMENT SETUP: per-pixel depth = water surface - sand, published for everyone
     bind: (ctx) => {
-      const fx = positionWorld.x;
-      const fz = positionWorld.z;
-      ctx.shared.depth = u.seaLevel
-        .add(ctx.wavesV.mul(damp(fx, fz)))
-        .sub(sand(fx, fz));
-      ctx.shared.fx = fx;
-      ctx.shared.fz = fz;
-    },
+  const fx = positionWorld.x;
+  const fz = positionWorld.z;
+  const depth = u.seaLevel
+    .add(ctx.wavesV.mul(damp(fx, fz)))
+    .sub(sand(fx, fz));
+
+  ctx.shared.depth = depth;
+  ctx.shared.seaMask = smoothstep(0, u.shoreWidth, depth); // 0 = sand, 1 = water
+  ctx.shared.fx = fx;
+  ctx.shared.fz = fz;
+},
 
     // FRAGMENT: sand on land, incoming (water) color in the sea, foam line between
     color: ({ color, ctx }) => {
       const depth = ctx.shared.depth;
       const seaMask = smoothstep(0, u.shoreWidth, depth);
       const deepT = smoothstep(0, u.deepDepth, depth);
-
-      const waterCol = mix(u.shallowColor, u.deepColor, deepT)
+      const breakup = mx_noise_float(
+        vec3(ctx.shared.fx.mul(0.05), ctx.shared.fz.mul(0.05), time.mul(0.05))
+      ).mul(0.15);
+      const deepTn = clamp(deepT.add(breakup), 0, 1);
+      const waterCol = mix(u.shallowColor, u.deepColor, deepTn)
         .mul(u.tintMix)
         .add(color.mul(float(1).sub(u.tintMix)));
 

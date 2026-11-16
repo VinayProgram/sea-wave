@@ -45,7 +45,7 @@ export function bubbleEffect(_grid: GridContext, options: BubbleOptions = {}) {
   const effect: Effect<typeof uniforms> = {
     name: "bubbles",
     uniforms,
-    color: ({ activity, color }) => {
+    color: ({ activity, color, ctx }) => {
       const wx = positionWorld.x;
       const wz = positionWorld.z;
       const t = time.mul(u.drift);
@@ -63,22 +63,24 @@ export function bubbleEffect(_grid: GridContext, options: BubbleOptions = {}) {
 
       // --- source 2: impacts (fish, objects) ---
       let impact: TSLNode = float(0);
-    
+
       for (let i = 0; i < MAX_IMPACTS; i++) {
         const d4 = impactData.element(i);
-      //@ts-ignore
+        //@ts-ignore
         const age = seaNow.sub(d4.z);
         const life = clamp(float(1).sub(age.div(u.impactDuration)), 0, 1);
         const radius = clamp(age.mul(u.impactSpeed), 0, u.impactRadius);
-          //@ts-ignore
+        //@ts-ignore
         const dist = length(vec2(wx, wz).sub(vec2(d4.x, d4.y)));
         const disc = float(1).sub(smoothstep(radius.mul(0.6), radius, dist)); // dense core, soft edge
-         //@ts-ignore
+        //@ts-ignore
         impact = impact.max(disc.mul(life).mul(d4.w)); // w = 0 means an empty slot
       }
 
       const gate = agitation.max(clamp(impact, 0, 1));
-      return mix(color, u.bubbleColor, spots.mul(gate).mul(u.opacity));
+      const sea = ctx.shared.seaMask ?? float(1);
+
+      return mix(color, u.bubbleColor, spots.mul(gate).mul(sea).mul(u.opacity));
     },
   };
   return effect;

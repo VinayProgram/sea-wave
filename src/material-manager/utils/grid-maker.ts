@@ -6,3 +6,5 @@ export const makeGrid = (size: number, segments: number): GridContext => ({
   segments,
   segmentSize: size / segments,
 });
+
+export const GRID = makeGrid(50, 200);

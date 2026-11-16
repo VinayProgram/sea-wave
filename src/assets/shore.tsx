@@ -1,7 +1,6 @@
 // assets/shore.tsx
 import { useMemo } from "react";
 import { DoubleSide, MeshStandardNodeMaterial } from "three/webgpu";
-import { makeGrid } from "../material-manager/utils/grid-maker";
 import { noiseEffect } from "../material-manager/effects/noise-effect";
 import { heightColorEffect } from "../material-manager/effects/height-color-effect";
 import { shoreEffect } from "../material-manager/effects/shore-effect";
@@ -9,9 +8,9 @@ import { bubbleEffect } from "../material-manager/effects/bubble-effect";
 import { useSeaControls } from "../context/sea-control";
 import { applyEffects } from "../material-manager/effects/main";
 import { useFrame } from "@react-three/fiber";
+import { GRID } from "../material-manager/utils/grid-maker";
 
 // 200 segments over 50 units = 0.25 per segment, so dunes and the waves resolve well
-const GRID = makeGrid(50, 200);
 
 type Props = { pos: [number, number, number] };
 
@@ -55,7 +54,6 @@ useFrame(({ clock }) => {
       material={material}
       position={pos}
       rotation={[-Math.PI / 2, 0, 0]}
-      renderOrder={1} // draw after opaque objects, since this material is transparent
     >
       <planeGeometry args={[GRID.size, GRID.size, GRID.segments, GRID.segments]} />
     </mesh>
