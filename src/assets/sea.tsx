@@ -10,6 +10,7 @@ import { useSeaControls } from "../context/sea-control";
 import { bubbleEffect } from "../material-manager/effects/bubble-effect";
 import { useFrame } from "@react-three/fiber";
 import { seaNow } from "../controls/sea-impacts";
+import { shoreEffect } from "../material-manager/effects/shore-effect";
 
 const GRID = makeGrid(50, 100);
 
@@ -27,10 +28,10 @@ useFrame((s) => { seaNow.value = s.clock.elapsedTime; });
       m,
       GRID,
       [
-        noiseEffect(GRID, uniforms.noise),
-        // rippleEffect(GRID, uniforms.ripple),
-        heightColorEffect(GRID, uniforms.heightColor),
-         bubbleEffect(GRID, uniforms.bubbles),
+       noiseEffect(GRID, uniforms.noise),
+               heightColorEffect(GRID, uniforms.heightColor), // water color
+               shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
+               bubbleEffect(GRID, uniforms.bubbles),
       ],
       [pos[0], pos[2]]
     );

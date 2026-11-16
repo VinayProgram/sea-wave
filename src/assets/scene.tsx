@@ -19,7 +19,7 @@ return (
           <Bridge>
            
            <ShoreMesh pos={[49, 0, 0]} />
-            <SeaMesh pos={[49, 0, -45]} />
+            <SeaMesh pos={[49, 0, -50]} />
             {/* <SeaMesh pos={[49, 0, 0]} />
             <SeaMesh pos={[0, 0, 49]} />
             <SeaMesh pos={[49, 0, 49]} /> */}
