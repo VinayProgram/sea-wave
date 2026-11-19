@@ -21,7 +21,7 @@ return (
            
            <ShoreMesh pos={[GRID.size - 1, 0, 0]} />
             <SeaMesh pos={[GRID.size - 1, 0, -GRID.size]} />
-    
+            
             <OrbitControls />
             <ambientLight intensity={0.4} color="white" />
             <Environment background files={'./sunset.hdr'} />

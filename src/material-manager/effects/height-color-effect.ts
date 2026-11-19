@@ -43,6 +43,7 @@ export function heightColorEffect(_grid: GridContext, options: HeightColorOption
     uniforms,
     color: ({ height }) => {
       const body = mix(deep, shallow, smoothstep(lowH, highH, height));
+      
       return mix(body, foam, smoothstep(foamStart, foamEnd, height));
     },
   };
