@@ -69,6 +69,20 @@ export const defaultSchema: Schema = {
     deepColor: { type: "color", value: "#06214f" },
     coastAngle: { type: "number", value: 0, min: -180, max: 180, step: 1 },
   },
+  shoreWave: {
+  wavelength:  { type: "number", value: 22,  min: 4,   max: 100, step: 1 },
+  speed:       { type: "number", value: 4,   min: 0,   max: 20,  step: 0.1 },
+  maxHeight:   { type: "number", value: 1.6, min: 0,   max: 8,   step: 0.1 },
+  sharpness:   { type: "number", value: 2,   min: 1,   max: 8,   step: 0.1 },
+  skew:        { type: "number", value: 0.5, min: -1,  max: 1,   step: 0.01 },
+  spread:      { type: "number", value: 20,  min: 0,   max: 90,  step: 1 },
+  variety:     { type: "number", value: 0.5, min: 0,   max: 0.9, step: 0.01 },
+  groupLength: { type: "number", value: 60,  min: 10,  max: 300, step: 5 },
+  groupAmount: { type: "number", value: 0.6, min: 0,   max: 1,   step: 0.01 },
+  drift:       { type: "number", value: 0.3, min: 0,   max: 3,   step: 0.05 },
+  setAmount:   { type: "number", value: 0.7, min: 0,   max: 1,   step: 0.01 },
+  setSpeed:    { type: "number", value: 0.15, min: 0,  max: 1,   step: 0.01 },
+}
 };
 
 type Value = number | string;

@@ -11,6 +11,7 @@ import { useFrame } from "@react-three/fiber";
 import { seaNow } from "../controls/sea-impacts";
 import { shoreEffect } from "../material-manager/effects/shore-effect";
 import { GRID } from "../material-manager/utils/grid-maker";
+import { shoreWaveEffect } from "../material-manager/effects/shore-wave-effect";
 
 
 const SeaMesh = ({ pos }: { pos: [number, number, number] }) => {
@@ -38,6 +39,7 @@ m.clearcoat = 0.0;       // clearcoat makes it look like glossy plastic
         heightColorEffect(GRID, uniforms.heightColor), // water color
         shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
         bubbleEffect(GRID, uniforms.bubbles),
+        shoreWaveEffect(GRID, uniforms.shoreWave),             // after water color, before bubbles
       ],
       [pos[0], pos[2]]
     );

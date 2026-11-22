@@ -10,6 +10,7 @@ import { applyEffects } from "../material-manager/effects/main";
 import { useFrame } from "@react-three/fiber";
 import { GRID } from "../material-manager/utils/grid-maker";
 import * as THREE from "three";
+import { shoreWaveEffect } from "../material-manager/effects/shore-wave-effect";
 // 200 segments over 50 units = 0.25 per segment, so dunes and the waves resolve well
 
 type Props = { pos: [number, number, number] };
@@ -39,6 +40,7 @@ export default function ShoreMesh({ pos }: Props) {
         heightColorEffect(GRID, uniforms.heightColor), // water color
         shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
         bubbleEffect(GRID, uniforms.bubbles),
+        shoreWaveEffect(GRID, uniforms.shore), // custom effect for shore wave animation
       ],
       [pos[0], pos[2]] // tile origin in world x, z
     );
