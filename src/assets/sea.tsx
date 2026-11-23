@@ -23,14 +23,16 @@ const SeaMesh = ({ pos }: { pos: [number, number, number] }) => {
       metalness: 0.3,
       side: THREE.DoubleSide,
     });
-m.metalness = 0.0;       // water is a dielectric
-m.roughness = 0.05;      // 0.02–0.12; nearly smooth
-m.transparent = false;   // fake depth through color instead
-m.opacity = 1.0;
-// MeshPhysicalNodeMaterial extras:
-m.ior = 1.333;
-m.specularIntensity = 1.0;
-m.clearcoat = 0.0;       // clearcoat makes it look like glossy plastic
+    m.metalness = 0.0;       // water is a dielectric
+    m.roughness = 0.05;      // 0.02–0.12; nearly smooth
+    m.transparent = false;   // fake depth through color instead
+    m.opacity = 1.0;
+    // MeshPhysicalNodeMaterial extras:
+    m.ior = 1.333;
+    m.specularIntensity = 1.0;
+    m.clearcoat = 0.0;       // clearcoat makes it look like glossy plastic
+
+    const shore = shoreEffect(GRID, uniforms.shore);
     applyEffects(
       m,
       GRID,
@@ -39,7 +41,7 @@ m.clearcoat = 0.0;       // clearcoat makes it look like glossy plastic
         heightColorEffect(GRID, uniforms.heightColor), // water color
         shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
         bubbleEffect(GRID, uniforms.bubbles),
-        shoreWaveEffect(GRID, uniforms.shoreWave),             // after water color, before bubbles
+        shoreWaveEffect(GRID, uniforms.shoreWave,shore),             // after water color, before bubbles
       ],
       [pos[0], pos[2]]
     );

@@ -16,6 +16,7 @@ const defaults = {
   seaLevel: 0, slope: 0.12, shoreZ: 0,
   coastAmp: 1.5, coastScale: 0.04, bumpAmp: 0.2, bumpScale: 0.35,
   coastAngle: 80, // radians, 0 = sea toward -z
+  runup: 0.6,   // how far above sea level a wave can push water up the sand
 
   // shore look
   shoreWidth: 0.35,  // depth over which sand turns into water
@@ -68,7 +69,7 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
 
   // waves fade to nothing where the water is shallow
   const damp = (wx: TSLNode, wz: TSLNode) =>
-    smoothstep(0, u.shoreWidth.mul(3), u.seaLevel.sub(sand(wx, wz)));
+  smoothstep(u.runup.negate(), u.shoreWidth.mul(3), u.seaLevel.sub(sand(wx, wz)));
 
   const effect: Effect<any> = {
     name: "shore",
@@ -86,17 +87,17 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
 
     // FRAGMENT SETUP: per-pixel depth = water surface - sand, published for everyone
     bind: (ctx) => {
-  const fx = positionWorld.x;
-  const fz = positionWorld.z;
-  const depth = u.seaLevel
-    .add(ctx.wavesV.mul(damp(fx, fz)))
-    .sub(sand(fx, fz));
+      const fx = positionWorld.x;
+      const fz = positionWorld.z;
+      const depth = u.seaLevel
+        .add(ctx.wavesV.mul(damp(fx, fz)))
+        .sub(sand(fx, fz));
 
-  ctx.shared.depth = depth;
-  ctx.shared.seaMask = smoothstep(0, u.shoreWidth, depth); // 0 = sand, 1 = water
-  ctx.shared.fx = fx;
-  ctx.shared.fz = fz;
-},
+      ctx.shared.depth = depth;
+      ctx.shared.seaMask = smoothstep(0, u.shoreWidth, depth); // 0 = sand, 1 = water
+      ctx.shared.fx = fx;
+      ctx.shared.fz = fz;
+    },
 
     // FRAGMENT: sand on land, incoming (water) color in the sea, foam line between
     color: ({ color, ctx }) => {
@@ -133,5 +134,5 @@ export function shoreEffect(_grid: GridContext, options: ShoreOptions = {}) {
       return max(opacity.mul(mix(float(1), seaOp, seaMask)), ctx.shared.foam);
     },
   };
-  return effect;
+  return Object.assign(effect, { sand });
 }

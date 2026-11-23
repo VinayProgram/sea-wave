@@ -48,6 +48,7 @@ export const defaultSchema: Schema = {
     opacity: { type: "number", value: 0.85, min: 0, max: 1, step: 0.01 },
   },
   shore: {
+    runup: { type: "number", value: 0.6, min: 0, max: 2, step: 0.05 },
     seaLevel: { type: "number", value: 0, min: -2, max: 3, step: 0.05 },
     slope: { type: "number", value: 0.12, min: 0.02, max: 0.4, step: 0.01 },
     shoreZ: { type: "number", value: 0, min: -25, max: 75, step: 1 },
@@ -70,19 +71,20 @@ export const defaultSchema: Schema = {
     coastAngle: { type: "number", value: 0, min: -180, max: 180, step: 1 },
   },
   shoreWave: {
-  wavelength:  { type: "number", value: 22,  min: 4,   max: 100, step: 1 },
-  speed:       { type: "number", value: 4,   min: 0,   max: 20,  step: 0.1 },
-  maxHeight:   { type: "number", value: 1.6, min: 0,   max: 8,   step: 0.1 },
-  sharpness:   { type: "number", value: 2,   min: 1,   max: 8,   step: 0.1 },
-  skew:        { type: "number", value: 0.5, min: -1,  max: 1,   step: 0.01 },
-  spread:      { type: "number", value: 20,  min: 0,   max: 90,  step: 1 },
-  variety:     { type: "number", value: 0.5, min: 0,   max: 0.9, step: 0.01 },
-  groupLength: { type: "number", value: 60,  min: 10,  max: 300, step: 5 },
-  groupAmount: { type: "number", value: 0.6, min: 0,   max: 1,   step: 0.01 },
-  drift:       { type: "number", value: 0.3, min: 0,   max: 3,   step: 0.05 },
-  setAmount:   { type: "number", value: 0.7, min: 0,   max: 1,   step: 0.01 },
+  wavelength:  { type: "number", value: 22,   min: 4,  max: 100, step: 1 },
+  speed:       { type: "number", value: 4,    min: 0,  max: 20,  step: 0.1 },
+  maxHeight:   { type: "number", value: 1.6,  min: 0,  max: 8,   step: 0.1 },
+  sharpness:   { type: "number", value: 2,    min: 1,  max: 8,   step: 0.1 },
+  skew:        { type: "number", value: 0.5,  min: -1, max: 1,   step: 0.01 },
+  variety:     { type: "number", value: 0.5,  min: 0,  max: 0.9, step: 0.01 },
+  shoal:       { type: "number", value: 1.8,  min: 1,  max: 4,   step: 0.05 },
+  shoalDepth:  { type: "number", value: 4,    min: 0.5, max: 10, step: 0.1 },
+  groupLength: { type: "number", value: 60,   min: 10, max: 300, step: 5 },
+  groupAmount: { type: "number", value: 0.6,  min: 0,  max: 1,   step: 0.01 },
+  drift:       { type: "number", value: 0.3,  min: 0,  max: 3,   step: 0.05 },
+  setAmount:   { type: "number", value: 0.7,  min: 0,  max: 1,   step: 0.01 },
   setSpeed:    { type: "number", value: 0.15, min: 0,  max: 1,   step: 0.01 },
-}
+},
 };
 
 type Value = number | string;

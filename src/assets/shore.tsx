@@ -7,7 +7,6 @@ import { shoreEffect } from "../material-manager/effects/shore-effect";
 import { bubbleEffect } from "../material-manager/effects/bubble-effect";
 import { useSeaControls } from "../context/sea-control";
 import { applyEffects } from "../material-manager/effects/main";
-import { useFrame } from "@react-three/fiber";
 import { GRID } from "../material-manager/utils/grid-maker";
 import * as THREE from "three";
 import { shoreWaveEffect } from "../material-manager/effects/shore-wave-effect";
@@ -16,7 +15,7 @@ import { shoreWaveEffect } from "../material-manager/effects/shore-wave-effect";
 type Props = { pos: [number, number, number] };
 
 export default function ShoreMesh({ pos }: Props) {
-  const { uniforms, setValue } = useSeaControls();
+  const { uniforms } = useSeaControls();
 
   const material = useMemo(() => {
     const m = new MeshPhysicalNodeMaterial({
@@ -32,15 +31,18 @@ export default function ShoreMesh({ pos }: Props) {
     m.ior = 1.333;
     m.specularIntensity = 1.0;
     m.clearcoat = 0.0;
+
+    const shore = shoreEffect(GRID, uniforms.shore);
+
     applyEffects(
       m,
       GRID,
       [
         noiseEffect(GRID, uniforms.noise),
         heightColorEffect(GRID, uniforms.heightColor), // water color
-        shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
         bubbleEffect(GRID, uniforms.bubbles),
-        shoreWaveEffect(GRID, uniforms.shore), // custom effect for shore wave animation
+        shoreEffect(GRID, uniforms.shore),             // after water color, before bubbles
+        shoreWaveEffect(GRID, uniforms.shoreWave, shore), // custom effect for shore wave animation
       ],
       [pos[0], pos[2]] // tile origin in world x, z
     );
@@ -49,18 +51,18 @@ export default function ShoreMesh({ pos }: Props) {
   }, [uniforms]); // built once, since the sliders only change uniform values
 
 
-  useFrame(({ clock }) => {
-    const t = clock.getElapsedTime();
+  // useFrame(({ clock }) => {
+  //   const t = clock.getElapsedTime();
 
-    // 1. Smoothly oscillate sea level
-    const waveHeight = Math.sin(t * 0.8) * 0.4;
+  //   // 1. Smoothly oscillate sea level
+  //   const waveHeight = Math.sin(t * 0.8) * 0.4;
 
-    // 2. Smoothly oscillate coast amplitude between 1.0 and 2.0 (centered around 1.5)
-    const coastAmp = 1.5 + Math.sin(t * 0.3) * 0.5;
+  //   // 2. Smoothly oscillate coast amplitude between 1.0 and 2.0 (centered around 1.5)
+  //   const coastAmp = 1.5 + Math.sin(t * 0.3) * 0.5;
 
-    setValue("shore", "seaLevel", waveHeight);
-    setValue("shore", "coastAmp", coastAmp);
-  });
+  //   setValue("shore", "seaLevel", waveHeight);
+  //   setValue("shore", "coastAmp", coastAmp);
+  // });
   return (
 
     <mesh
